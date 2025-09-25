@@ -10,7 +10,7 @@ exports.getAllById = async (req, res) => {
         });
         res.status(200).json(commentList);
     } catch (e) {
-        res.status(400).json({ error: "Impossible de récupérer les produits" })
+        res.status(400).json({ error: "Impossible de récupérer les commentaires" })
     }
 }
 
@@ -18,8 +18,8 @@ exports.create = async (req, res) => {
     try {
         let body = JSON.parse(req.body);
         let comment = await Comment.create({
-            idPost: body.id,
-            userId: body.userId,
+            idPost: req.params.id,
+            userId: req.token.id,
             comment: body.comment
         });
         res.status(201).json(comment);
@@ -50,15 +50,19 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        let comment = await Comment.destroy({
+        let comment = await Comment.findOne({
             where: {
                 id: req.params.id
             }
         });
+        if (!comment) {
+            return res.status(404).json({ error: "Commentaire introuvable" });
+        }
         if(req.token.id !== comment.userId){
             return res.status(403).json('Vous n\'avez pas les droits pour supprimer ce commentaire');
         }
-        res.status(200).json(comment);
+        await comment.destroy();
+        res.status(200).json({ message: "Commentaire supprimé avec succès" });
     } catch (e) {
         res.status(400).json({ error: "Impossible de supprimer ce commentaire" })
     }
