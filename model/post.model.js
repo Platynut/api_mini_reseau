@@ -8,9 +8,6 @@ const Post = db.define('Post',{
     content: {
         type: DataTypes.STRING
     },
-    author:{
-        type: DataTypes.STRING
-    },
     picture: {
         type: DataTypes.STRING
     }
