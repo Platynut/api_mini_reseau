@@ -6,7 +6,8 @@ require('dotenv').config();
 
 exports.getAll = async (req,res) => {
     try{
-        let userList = await User.findAll();
+        let userList = await User.findAll({
+      attributes: { exclude: ['password'] }});
         res.status(200).json(userList);
     }catch(e){
         res.status(400).json({error: "Impossible de récupérer les utilsateurs"})
@@ -18,7 +19,8 @@ exports.getById = async (req,res) => {
         let user = await User.findOne({
             where: {
                 id: req.params.id
-            }
+            },
+            attributes: { exclude: ['password'] }
         });
         res.status(200).json(user);
     }catch(e){
@@ -31,6 +33,7 @@ exports.signin = async (req, res, next) => {
         const hash = bcryptjs.hashSync(req.body.password,10);
         let user = await User.create({
             email: req.body.email,
+            pseudo: req.body.pseudo,
             password: hash
         });
         res.status(201).json(user);
@@ -63,8 +66,15 @@ exports.login = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
+        // Vérifier que l'utilisateur connecté correspond à l'ID demandé
+        if(req.token.id != req.params.id){
+            return res.status(403).json({error: "Vous n'êtes pas autorisé à modifier ce compte"});
+        }
+
+        const hash = bcryptjs.hashSync(req.body.password,10);
         let user = await User.update({
-            password: req.body.password
+            password: hash,
+            pseudo: req.body.pseudo
         },{
             where: {
                 id: req.params.id
@@ -78,6 +88,11 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req,res) => {
     try{
+
+        if(req.token.id != req.params.id){
+            return res.status(403).json({error: "Vous n'êtes pas autorisé à supprimer ce compte"});
+        }
+
         let user = await User.destroy({
             where:{
                 id: req.params.id
