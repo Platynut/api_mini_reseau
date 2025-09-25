@@ -5,22 +5,21 @@ exports.getAllById = async (req, res) => {
     try {
         let commentList = await Comment.findAll({
             where: {
-                postId: req.params.postId 
+                idPost: req.params.id 
             }
         });
         res.status(200).json(commentList);
     } catch (e) {
-        res.status(400).json({ error: "Impossible de récupérer les commentaires" })
+        res.status(400).json({ error: "Impossible de récupérer les commentaires", fe: req.params.id  })
     }
 }
 
 exports.create = async (req, res) => {
     try {
-        let body = JSON.parse(req.body);
         let comment = await Comment.create({
             idPost: req.params.id,
             userId: req.token.id,
-            comment: body.comment
+            comment: req.body.comment
         });
         res.status(201).json(comment);
     } catch (e) {

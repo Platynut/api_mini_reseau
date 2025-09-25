@@ -24,17 +24,13 @@ exports.getById = async (req, res) => {
     }
 }
 
-exports.create = async (req, res, next) => {
+exports.create = async (req, res) => {
     try {
-        //let body = JSON.parse(req.body.post);
-        //if(req.file){
-         //   body.picture = req.file.filename
-        //}
+        console.log("req.token:", req.token)
         let post = await Post.create({
             title: req.body.title,
             content: req.body.content,
-            author: req.body.author,
-            //picture: body.picture
+            userId: req.token.id
         });
         res.status(201).json(post);
     } catch (e) {

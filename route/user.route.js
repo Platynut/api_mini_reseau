@@ -15,3 +15,4 @@ router.put('/:id',auth, userController.update);
 router.delete('/:id',auth, userController.delete);
 
 module.exports = router;
+//1@Lla triste vie de toto
