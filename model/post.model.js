@@ -1,21 +1,21 @@
 const {DataTypes} = require('sequelize');
 const db = require('./index');
 
-const Product = db.define('Product',{
-    name: {
+const Post = db.define('Post',{
+    title: {
         type: DataTypes.STRING
     },
-    description: {
+    content: {
         type: DataTypes.STRING
     },
-    price:{
-        type: DataTypes.DECIMAL(10,2)
+    author:{
+        type: DataTypes.STRING
     },
     picture: {
         type: DataTypes.STRING
     }
 },{
-    tableName: "product"
+    tableName: "post"
 });
 
-module.exports = Product;
+module.exports = Post
