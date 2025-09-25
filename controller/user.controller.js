@@ -63,6 +63,11 @@ exports.login = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
     try {
+        // Vérifier que l'utilisateur connecté correspond à l'ID demandé
+        if(req.token.id != req.params.id){
+            return res.status(403).json({error: "Vous n'êtes pas autorisé à modifier ce compte"});
+        }
+
         let user = await User.update({
             password: req.body.password
         },{
@@ -78,6 +83,11 @@ exports.update = async (req, res, next) => {
 
 exports.delete = async (req,res) => {
     try{
+
+        if(req.token.id != req.params.id){
+            return res.status(403).json({error: "Vous n'êtes pas autorisé à supprimer ce compte"});
+        }
+
         let user = await User.destroy({
             where:{
                 id: req.params.id
